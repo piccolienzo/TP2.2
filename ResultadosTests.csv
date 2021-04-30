@@ -1,0 +1,19 @@
+Binomal Test Chi
+Valor Chi;527.3636363636361
+Descripcion;Prueba no superada
+Poisson Test Chi
+Valor Chi;890.9999999999997
+Descripcion;Prueba no superada
+Uniforme Test Chi
+Valor Chi;4.333333333333334
+Descripcion;Prueba superada
+Exponencial Test Anderson
+Estadistico;0.42120048775032615
+Valores Criticos (Confianza 90%,85%,97.5%,99%)
+[0.917 1.072 1.333 1.596 1.945]Referencia del 95%:
+Resultado; Prueba superada, estadístico es menor que criticos;
+Normal Test Anderson
+Estadistico;0.7030854031812197
+Valores Criticos (Confianza 90%,85%,97.5%,99%)
+[0.555 0.632 0.759 0.885 1.053]Referencia del 95%:
+Resultado; Prueba superada, estadístico es menor que criticos;

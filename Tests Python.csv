@@ -1,15 +1,15 @@
 Test_Corridas
-Varianza;248.74275083111996
-Desvio;15.771580479809877
-Media;499.9919839679359
-Cota Inferior;469.07968622750855
-Cota superior;530.9042817083632
+Varianza;248.62276747371988
+Desvio;15.76777623743183
+Media;499.87174348697397
+Cota Inferior;468.9669020616076
+Cota superior;530.7765849123404
 Resultado
 Descripcion;Prueba no superada
 Test Chi
-Valor Chi;4.535353535353535
+Valor Chi;11.404040404040403
 Descripcion;Prueba superada
 Test Kolmogorov
-DM calculado;0.030000000000000027
-Resultado Test;0.030000000000000027
+DM calculado;0.12
+Resultado Test;0.12
 Descripcion;Superado

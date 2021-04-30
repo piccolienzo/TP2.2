@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import random
 import matplotlib.patches as mpatches
 import csv
+from scipy import stats
 #Metodo de los cuadrados
 
 def dibujo(x,c):
@@ -14,86 +15,31 @@ def dibujo(x,c):
 		plt.plot(xi,x[xi],c,alpha=0.15)
 	plt.ylim(min(x),max(x))
 
-def dibujo_(x,c,nombre):
+def dibujo_puntos(x,c,nombre):
 	plt.figure(figsize=(10,10))	
 	plt.title(nombre)
 	plt.xlabel("Corridas")
 	plt.ylabel("Valor")
 	for xi in range(0,len(x)-1):
 		plt.plot(xi,x[xi],c,alpha=0.15)
+
 	plt.ylim(min(x),max(x))
 	plt.savefig(nombre+".svg")
 	plt.close()	
 
-def cuadrados():
-	numeros = []
-	semilla = str(6543)
-	tam1 = len(semilla)
-	
-	numero1 = int(semilla)
-	for i in range(1000):
-		numero2 = numero1**2
-		snumero2 = str(numero2)
-		tam2 = len(snumero2)
-		primerc = int((tam2 - tam1) / 2)
-		snumero3 = snumero2[primerc:primerc+tam1]
-		
-		numero1 = int(snumero3)
-		numeros.append(float("0."+str(numero1)))		
-	dibujo(numeros,'bo')
-	dibujo_(numeros,'bo',"Generador Cuadrados")
-	
-	tc = testCorridas(numeros)
-	tp = testPoker(numeros)
-	tch = TestChiCuadrado(numeros)
-	tko = TestKolmogorov(numeros)
-
-	
-	csv_write("Tests Cuadrados.csv",tc+tp+tch+tko)
+def dibujo_bars(s,c,nombre):
+	colors = []
+	ase = calcularIntervalos(s)
+	for x in range (len(ase)):
+		colors.append(c)
+	plt.hist(x = ase ,bins=int(math.sqrt(len(ase))),color=colors, rwidth=2.85, linewidth=0.2, histtype="bar")
+	plt.title(nombre)
+	plt.xlabel("Corridas")
+	plt.ylabel("Valor")
+	plt.savefig("Histograma"+nombre+".svg")
+	plt.close()	
 
 
-def congruente():
-	x = []
-	u = []
-	
-	x.append(6543)
-	a = 7
-	c = 0
-	m = 512
-	u.append(x[0]/m)
- 
-	for i in range(1,1000):
-		x.append((a * x[i-1] + c) % m)
-		u.append(x[-1]/m)
-		
-	
-	u[0]=0.998046875
-	dibujo(u,'ro')
-	dibujo_(u,'ro',"Generador Congruente")
-
-	tc = testCorridas(u)
-	tp = testPoker(u)
-	tch = TestChiCuadrado(u)
-	tko = TestKolmogorov(u)
-
-
-	csv_write("Tests Congruente.csv",tc+tp+tch+tko)
-
-
-def gPython():
-	x = []
-	for i in range(1,1000):
-		x.append(random.random())
-	dibujo(x,'go')
-	dibujo_(x,'go',"Generador Python")
-	
-	tc = testCorridas(x)
-	#tp = testPoker(x)
-	tch = TestChiCuadrado(x)
-	tko = TestKolmogorov(x)
-
-
-	csv_write("Tests Python.csv",tc+tch+tko)
 
 
 def testCorridas(valoresGenerados):
@@ -256,6 +202,21 @@ def TestKolmogorov(muestra):
 		csv_file = csv_file + "Descripcion;No superado\n"
 	return csv_file
 
+def TestAnderson(x,tipo):
+	
+	csv_file = "Test Anderson\n"
+	estadis,crit,signific = stats.anderson(x, dist=tipo)
+	csv_file += "Estadistico;"+str(estadis)+"\n"
+	csv_file +="Valores Criticos (Confianza 90%,85%,97.5%,99%)\n"+str(crit)
+	csv_file += "Referencia del 95%:\n"
+	if (estadis < crit[2]):
+		csv_file += "Resultado; Prueba superada, estadístico es menor que criticos;\n"
+	else:
+		csv_file += "Resultado; Prueba no superada, estadístico no es menor que criticos;\n"
+	return csv_file
+
+
+
 def csv_write(path,csv_file):	
 	text_file = open(path, "w")
 	n = text_file.write(csv_file)
@@ -276,7 +237,9 @@ def calcularIntervalos(muestra):
         elif(num > 0.7 and num <= 0.8): intervalos[7].append(num)
         elif(num > 0.8 and num <= 0.9): intervalos[8].append(num)
         elif(num > 0.9 and num <= 1): intervalos[9].append(num)
+		
     return(intervalos)
+
 
 
 #discretas
@@ -364,15 +327,26 @@ for x in range(ciclos):
     uniformes.append(dc_uniforme(0,1))
 
 
-dibujo_(poissons,'bo',"Distribucion de Poisson")
-dibujo_(hipergeometricos,'bo',"Distribucion Hipergeometrica")
-dibujo_(binomiales,'bo',"Distribucion binomial")
-dibujo_(pascales,'bo',"Distribucion de Pascal")
-dibujo_(normales,'bo',"Distribucion Normal")
-dibujo_(gammas,'bo',"Distribucion Gamma")
-dibujo_(exponenciales,'bo',"Distribucion exponencial")
-dibujo_(uniformes,'bo',"Distribucion Uniforme")
 
-gPython()
+dibujo_puntos(exponenciales,'bo',"Distribucion exponencial")
+dibujo_puntos(pascales,'bo',"Distribucion de Pascal")
+dibujo_puntos(gammas,'bo',"Distribucion Gamma")
+dibujo_puntos(normales,'bo',"Distribucion Normal")
+dibujo_puntos(uniformes,'bo',"Distribucion Uniforme")
+
+#sin tests gamma,pascal,hipergeometrica sin tests
+
+dibujo_bars(normales,"r","Histograma Normales")
+dibujo_bars(binomiales,"r","Histograma Binomiales")
+
+#hacer tests y llamar a csvwrite
+
+bi ="Binomal - "+ TestChiCuadrado( binomiales)
+po ="Poisson - "+  TestChiCuadrado(poissons)
+un ="Uniforme - "+ TestChiCuadrado( uniformes)
+ex ="Exponencial - "+  TestAnderson(exponenciales,"expon")
+no ="Normal - "+  TestAnderson(normales,"norm")
+csv_write("ResultadosTests.csv",bi+po+un+ex+no)
+
 
 
